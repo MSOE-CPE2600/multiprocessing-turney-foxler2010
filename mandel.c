@@ -80,6 +80,8 @@ int main(int argc, char *argv[])
 /**
  * Return the number of iterations at point x, y
  * in the Mandelbrot space, up to a maximum of max.
+ * 
+ * This is the actual "mandelbrot math" part!!
  */
 int iterations_at_point(double x, double y, int max)
 {
@@ -106,7 +108,6 @@ void compute_image(imgRawImage *img, double xmin, double xmax, double ymin, doub
 	int j;
 	int width = img->width;
 	int height = img->height;
-
 	// For every pixel in the image...
 	for (j = 0; j < height; j++) {
 		for (i = 0; i < width; i++) {
