@@ -1,3 +1,16 @@
+/*
+ * Filename: jpegrw.h
+ * Description: Header file for jpegrw.c
+ * Modified by: Drew Malone <malonea@msoe.edu>
+ * Created: 11/11/25
+ * Compile with: make
+ */
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <jpeglib.h>    
+#include <jerror.h>
+
 #ifndef JPEGRW_H
 #define JPEGRW_H
 
@@ -10,27 +23,23 @@ typedef struct imgRawImage {
 } imgRawImage;
 
 // reads in jpeg - allocated memory in imgRawImage - to be freed by caller
-imgRawImage* loadJpegImageFile(const char* fname);
+imgRawImage* loadJpegImageFile(const char *fname);
 
 // writes out jpeg
-int storeJpegImageFile(const imgRawImage* img, const char* lpFilename);
+int storeJpegImageFile(const imgRawImage *img, const char *lpFilename);
 
 // A few functions to manage raw images
 imgRawImage* initRawImage(unsigned int width, unsigned int height);
 
-void freeRawImage(imgRawImage* img);
+void freeRawImage(imgRawImage *img);
 
+void setImageCOLOR(imgRawImage *image, unsigned int rgb);
 
-void setImageCOLOR(imgRawImage* image,unsigned int rgb);
+void setImageRGB(imgRawImage *image, unsigned char red, unsigned char green, unsigned char blue);
 
-void setImageRGB(imgRawImage* image,unsigned char red,unsigned char green,
-							 unsigned char blue);
-
-void setPixelRGB(imgRawImage* image, unsigned int x, unsigned int y,
-							 unsigned char red,unsigned char green,
-							 unsigned char blue);
+void setPixelRGB(imgRawImage *image, unsigned int x, unsigned int y,
+	             unsigned char red, unsigned char green, unsigned char blue);
 							 
-void setPixelCOLOR(imgRawImage* image, unsigned int x, unsigned int y, unsigned int rgb);
+void setPixelCOLOR(imgRawImage *image, unsigned int x, unsigned int y, unsigned int rgb);
 
-
-#endif  /* Compile guard */
+#endif // Compile guard

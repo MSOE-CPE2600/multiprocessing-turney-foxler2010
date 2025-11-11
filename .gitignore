@@ -1,5 +1,10 @@
+# Build files
 *.d
 *.o
+
+# Executables
 mandel
+
+# Output of program
 *.jpg
 *.mpg

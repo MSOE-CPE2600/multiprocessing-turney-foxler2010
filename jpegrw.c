@@ -1,27 +1,26 @@
-/// 
-//  jpegrw.c
-//  Based on example code found here:
-//  https://www.tspi.at/2020/03/20/libjpegexample.html
-//
-//  Minor changes made to some types.
-//  Compile with -ljpeg
-///
-#include <stdlib.h>
-#include <stdio.h>
-#include <jpeglib.h>    
-#include <jerror.h>
+/*
+ * Filename: jpegrw.c
+ * Description: Based on example code found here:
+ *              https://www.tspi.at/2020/03/20/libjpegexample.html
+ *              Minor changes made to some types.
+ * Modified by: Drew Malone <malonea@msoe.edu>
+ * Created: 11/11/25
+ * Compile with: make
+ */
+
 #include "jpegrw.h"
 
-#define NUM_COMPONENTS 3   // always 3 for JPG
+// always 3 for JPG
+#define NUM_COMPONENTS 3
 
 imgRawImage* initRawImage(unsigned int width, unsigned int height)
 {
 	// num components always 3
 	imgRawImage* newImg;
 
-	newImg = (imgRawImage*) malloc(sizeof(imgRawImage));
+	newImg = malloc(sizeof(imgRawImage));
 
-	newImg->lpData = (unsigned char*)malloc(sizeof(unsigned char)*(width * height * NUM_COMPONENTS));
+	newImg->lpData = malloc(sizeof(unsigned char)*(width * height * NUM_COMPONENTS));
 
 	newImg->numComponents = NUM_COMPONENTS;
 	newImg->width = width;
@@ -30,78 +29,69 @@ imgRawImage* initRawImage(unsigned int width, unsigned int height)
 	return newImg;
 }
 
-void freeRawImage(imgRawImage* img)
+void freeRawImage(imgRawImage *img)
 {
 	free(img->lpData);
 	free(img);
 }
 
-void setImageRGB(imgRawImage* image,unsigned char red,unsigned char green,
-							 unsigned char blue)
+void setImageRGB(imgRawImage *image, unsigned char red, unsigned char green, unsigned char blue)
 {
-	for(unsigned int i=0;i<image->width;i++)
-	{
-		for(unsigned int j=0;j<image->height;j++)
-		{
+	for (unsigned int i = 0; i < image->width; i++) {
+		for (unsigned int j = 0; j < image->height; j++) {
 			image->lpData[((j*image->width+i)*image->numComponents)+0] = red; 
 			image->lpData[((j*image->width+i)*image->numComponents)+1] = green;
 			image->lpData[((j*image->width+i)*image->numComponents)+2] = blue;
 		}
-
 	}
 }
 
-void setImageCOLOR(imgRawImage* image,unsigned int rgb)
+void setImageCOLOR(imgRawImage *image, unsigned int rgb)
 {
-	setImageRGB(image,(rgb&0xFF0000)>>16,(rgb&0xFF00)>>8,rgb&0xFF);
+	setImageRGB(image, (rgb&0xFF0000)>>16, (rgb&0xFF00)>>8, rgb&0xFF);
 }
 
-void setPixelRGB(imgRawImage* image, unsigned int x, unsigned int y,
-							 unsigned char red,unsigned char green,
-							 unsigned char blue)
+void setPixelRGB(imgRawImage *image, unsigned int x, unsigned int y,
+				 unsigned char red, unsigned char green, unsigned char blue)
 {
 	// flip Y axis so 0,0 is lower-left corner, not upper left
 	y = image->height - y - 1;
 
 	// only plot valid x and y - if invalid, do nothing
-	if(y<image->height && x<image->width)
-	{
+	if (y < image->height && x < image->width) {
 		image->lpData[((y*image->width+x)*image->numComponents)+0] = red; 
 		image->lpData[((y*image->width+x)*image->numComponents)+1] = green;
 		image->lpData[((y*image->width+x)*image->numComponents)+2] = blue;
 	}
 }
 
-void setPixelCOLOR(imgRawImage* image, unsigned int x, unsigned int y, unsigned int rgb)
-{
-	setPixelRGB(image, x, y, (rgb&0xFF0000)>>16,(rgb&0xFF00)>>8,rgb&0xFF);
+void setPixelCOLOR(imgRawImage *image, unsigned int x, unsigned int y, unsigned int rgb) {
+	setPixelRGB(image, x, y, (rgb&0xFF0000)>>16, (rgb&0xFF00)>>8, rgb&0xFF);
 }
 
-
-
-imgRawImage* loadJpegImageFile(const char* lpFilename) 
-{
+imgRawImage *loadJpegImageFile(const char *lpFilename) {
 	struct jpeg_decompress_struct info;
 	struct jpeg_error_mgr err;
 
-	struct imgRawImage* lpNewImage;
+	struct imgRawImage *lpNewImage;
 
-	unsigned long int imgWidth, imgHeight;
+	unsigned long int imgWidth;
+	unsigned long int imgHeight;
 	int numComponents;
 
 	unsigned long int dwBufferBytes;
-	unsigned char* lpData;
+	unsigned char *lpData;
 
-	unsigned char* lpRowBuffer[1];
+	unsigned char *lpRowBuffer[1];
 
-	FILE* fHandle;
+	FILE *fHandle;
 
 	fHandle = fopen(lpFilename, "rb");
-	if(fHandle == NULL) {
+	if (fHandle == NULL) {
 		#ifdef DEBUG
 			fprintf(stderr, "%s:%u: Failed to read file %s\n", __FILE__, __LINE__, lpFilename);
 		#endif
-		return NULL; /* ToDo */
+		return NULL; // TODO
 	}
 
 	info.err = jpeg_std_error(&err);
@@ -116,25 +106,22 @@ imgRawImage* loadJpegImageFile(const char* lpFilename)
 	numComponents = info.num_components;
 
 	#ifdef DEBUG
-		fprintf(
-			stderr,
-			"%s:%u: Reading JPEG with dimensions %lu x %lu and %u components\n",
-			__FILE__, __LINE__,
-			imgWidth, imgHeight, numComponents
-		);
+		fprintf(stderr, "%s:%u: Reading JPEG with dimensions %lu x %lu and %u components\n",
+			    __FILE__, __LINE__, imgWidth, imgHeight, numComponents);
 	#endif
 
-	dwBufferBytes = imgWidth * imgHeight * 3; /* We only read RGB, not A */
-	lpData = (unsigned char*)malloc(sizeof(unsigned char)*dwBufferBytes);
+	// We only read RGB, not A
+	dwBufferBytes = imgWidth * imgHeight * 3;
+	lpData = malloc(sizeof(unsigned char)*dwBufferBytes);
 
-	lpNewImage = (struct imgRawImage*)malloc(sizeof(struct imgRawImage));
+	lpNewImage = malloc(sizeof(struct imgRawImage));
 	lpNewImage->numComponents = numComponents;
 	lpNewImage->width = imgWidth;
 	lpNewImage->height = imgHeight;
 	lpNewImage->lpData = lpData;
 
-	/* Read scanline by scanline */
-	while(info.output_scanline < info.output_height) {
+	// Read scanline by scanline
+	while (info.output_scanline < info.output_height) {
 		lpRowBuffer[0] = (unsigned char *)(&lpData[3*info.output_width*info.output_scanline]);
 		jpeg_read_scanlines(&info, lpRowBuffer, 1);
 	}
@@ -146,8 +133,6 @@ imgRawImage* loadJpegImageFile(const char* lpFilename)
 	return lpNewImage;
 }
 
-
-
 int storeJpegImageFile(const imgRawImage* lpImage,const char* lpFilename)
 {
 	struct jpeg_compress_struct info;
@@ -158,7 +143,7 @@ int storeJpegImageFile(const imgRawImage* lpImage,const char* lpFilename)
 	FILE* fHandle;
 
 	fHandle = fopen(lpFilename, "wb");
-	if(fHandle == NULL) {
+	if (fHandle == NULL) {
 		#ifdef DEBUG
 			fprintf(stderr, "%s:%u Failed to open output file %s\n", __FILE__, __LINE__, lpFilename);
 		#endif
@@ -180,7 +165,7 @@ int storeJpegImageFile(const imgRawImage* lpImage,const char* lpFilename)
 
 	jpeg_start_compress(&info, TRUE);
 
-	/* Write every scanline ... */
+	// Write every scanline...
 	while(info.next_scanline < info.image_height) {
 		lpRowBuffer[0] = &(lpImage->lpData[info.next_scanline * (lpImage->width * 3)]);
 		jpeg_write_scanlines(&info, lpRowBuffer, 1);
