@@ -8,3 +8,9 @@ mandel
 # Output of program
 *.jpg
 *.mpg
+
+# But not these outputs
+# (they are useful to have around)
+!mandel.jpg
+!kool.jpg
+!kool_big.jpg
