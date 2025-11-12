@@ -4,6 +4,7 @@
 
 # Executables
 mandel
+mandelmovie
 
 # Output of program
 *.jpg

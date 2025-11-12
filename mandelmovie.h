@@ -6,13 +6,17 @@
  * Compile with: make
  */
 
+#define _POSIX_C_SOURCE 200809L
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <string.h>
 
-#define SCALE 0.0001
-#define X_COORD -1.249705
-#define Y_COORD 0.111053
-#define OUTFILE kool.jpg
+int generate_frame();
 
-#define BIG_WIDTH 8000
-#define BIG_HEIGHT 8000
+char* parse_outfile(const char *outfile_base, int frame);
+
+int split_filename(const char *filename, char *base, char *ext);
+
+int show_help();

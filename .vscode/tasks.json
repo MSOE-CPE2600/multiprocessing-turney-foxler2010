@@ -37,6 +37,30 @@
         "close": true
       },
       "problemMatcher": []
+    },
+    {
+      "label": "make mandel",
+      "type": "shell",
+      "command": "make mandel",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "clear": true,
+        "focus": true
+      },
+      "problemMatcher": "$gcc"
+    },
+    {
+      "label": "make mandelmovie",
+      "type": "shell",
+      "command": "make mandelmovie",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "clear": true,
+        "focus": true
+      },
+      "problemMatcher": "$gcc"
     }
   ]
 }

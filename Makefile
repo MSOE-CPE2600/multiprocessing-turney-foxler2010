@@ -1,26 +1,33 @@
 CC=gcc
 CFLAGS=-c -Wall -Werror
 LDFLAGS=-ljpeg
-SOURCES= mandel.c jpegrw.c
-EXECUTABLE=mandel
+MANDEL_SOURCES= mandel.c jpegrw.c
+MANDEL_EXECUTABLE=mandel
+MOVIE_SOURCES=mandelmovie.c
+MOVIE_EXECUTABLE=mandelmovie
 
 # Do not modify vars below this line!!
 
-OBJECTS=$(SOURCES:.c=.o)
+MANDEL_OBJECTS=$(MANDEL_SOURCES:.c=.o)
+MOVIE_OBJECTS=$(MOVIE_SOURCES:.c=.o)
 
-all: $(SOURCES) $(EXECUTABLE)
+all: $(MANDEL_EXECUTABLE) $(MOVIE_EXECUTABLE)
 
 debug: CFLAGS += -g
-debug: $(SOURCES) $(EXECUTABLE)
+debug: $(MANDEL_EXECUTABLE) $(MANDEL_EXECUTABLE)
 
 clean:
-	rm -rf $(OBJECTS) $(EXECUTABLE) *.d
+	rm -rf $(MANDEL_OBJECTS) $(MANDEL_EXECUTABLE) $(MOVIE_OBJECTS) $(MOVIE_EXECUTABLE) *.d
 
 # pull in dependency info for *existing* .o files
--include $(OBJECTS:.o=.d)
+-include $(MANDEL_OBJECTS:.o=.d)
+-include $(MOVIE_OBJECTS:.o=.d)
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+$(MANDEL_EXECUTABLE): $(MANDEL_OBJECTS)
+	$(CC) $(MANDEL_OBJECTS) $(LDFLAGS) -o $@
+
+$(MOVIE_EXECUTABLE): $(MOVIE_OBJECTS)
+	$(CC) $(MOVIE_OBJECTS) -o $@
 
 .c.o:
 	$(CC) $(CFLAGS) $< -o $@
