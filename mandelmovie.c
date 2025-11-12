@@ -81,8 +81,6 @@ int main(int argc, char *argv[])
     // TODO magic number
     for (int frame = 0; frame < 50; frame++) {
         char *outfile = parse_outfile(outfile_base_l, &base, &ext, frame);
-        // TODO debug
-        printf("\e[1mDEBUG:\e[0m outfile: %s\n", outfile);
         generate_frame();
         free(outfile);
     }
