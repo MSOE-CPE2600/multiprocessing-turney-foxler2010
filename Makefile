@@ -3,7 +3,7 @@ CFLAGS=-c -Wall -Werror
 LDFLAGS=-ljpeg
 MANDEL_SOURCES= mandel.c jpegrw.c
 MANDEL_EXECUTABLE=mandel
-MOVIE_SOURCES=mandelmovie.c
+MOVIE_SOURCES=mandelmovie.c outfile_parser.c
 MOVIE_EXECUTABLE=mandelmovie
 
 # Do not modify vars below this line!!
