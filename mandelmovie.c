@@ -102,7 +102,22 @@ int generate_frame()
  */
 int show_help()
 {
-    // TODO
-    printf("\e[1m\e[31mTODO write help message.\e[0m\n");
+    printf("Use: mandelmovie [options]\n");
+	printf("Where options are:\n");
+	printf("-m <max>    The maximum number of iterations per point. (default=1000)\n");
+	printf("-x <coord>  X coordinate of zoomed-in image's center point. (default=0)\n");
+	printf("-y <coord>  Y coordinate of zoomed-in image's center point. (default=0)\n");
+	printf("-s <scale>  Scale of the zoomed-in image in Mandlebrot coordinates (X-axis). (default=4)\n");
+	printf("-W <pixels> Width of the images in pixels. (default=1000)\n");
+	printf("-H <pixels> Height of the images in pixels. (default=1000)\n");
+	printf("-o <file>   Set output file base name. (default=mandel.jpg)\n");
+    printf("             This will be modified to add the frame number\n");
+    printf("             between the name and the file extension.\n");
+    printf("             ex. \"mandel_35.jpg\"\n");
+	printf("-h          Show this help text.\n");
+	printf("\nSome examples are:\n");
+	printf("mandelmovie -x -0.5 -y -0.5 -s 0.2\n");
+	printf("mandelmovie -x -.38 -y -.665 -s .05 -m 100\n");
+	printf("mandelmovie -x 0.286932 -y 0.014287 -s .0005 -m 1000\n\n");
     return 0;
 }
