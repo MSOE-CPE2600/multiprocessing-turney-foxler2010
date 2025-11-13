@@ -53,18 +53,26 @@ int main(int argc, char *argv[])
 		}
 	}
     
-    // TODO modify x, y, and scale vars for each frame
+    double *x_values = malloc(sizeof(double)*NUM_FRAMES);
+    linspace(x_values, x_zoomed, TARGET_X, NUM_FRAMES);
+    double *y_values = malloc(sizeof(double)*NUM_FRAMES);
+    linspace(y_values, y_zoomed, TARGET_Y, NUM_FRAMES);
+    double *scale_values = malloc(sizeof(double)*NUM_FRAMES);
+    linspace(scale_values, scale, TARGET_SCALE, NUM_FRAMES);
     char *base = NULL;
     char *ext = NULL;
     int outfile_base_l = split_filename(outfile_base, &base, &ext);
     for (int frame = 0; frame < NUM_FRAMES; frame++) {
         char *outfile = parse_outfile(outfile_base_l, &base, &ext, frame);
         // TODO modify x, y, and scale vars for each frame
-        generate_frame(max_iters, x_zoomed, y_zoomed,
-                       scale, width, height, outfile);
+        generate_frame(max_iters, x_values[frame], y_values[frame],
+                       scale_values[frame], width, height, outfile);
         free(outfile);
     }
-    // free base and ext buffers
+    // free buffers and linspaces
+    free(x_values);
+    free(y_values);
+    free(scale_values);
     free(base);
     free(ext);
 
