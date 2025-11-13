@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 			case 'm':
 				max_iters = atoi(optarg);
 				break;
-			case 'x':
+            case 'x':
 				x_zoomed = atof(optarg);
 				break;
 			case 'y':
@@ -52,14 +52,16 @@ int main(int argc, char *argv[])
 				break;
 		}
 	}
-
+    
     // TODO modify x, y, and scale vars for each frame
     char *base = NULL;
     char *ext = NULL;
     int outfile_base_l = split_filename(outfile_base, &base, &ext);
     for (int frame = 0; frame < NUM_FRAMES; frame++) {
         char *outfile = parse_outfile(outfile_base_l, &base, &ext, frame);
-        generate_frame();
+        // TODO modify x, y, and scale vars for each frame
+        generate_frame(max_iters, x_zoomed, y_zoomed,
+                       scale, width, height, outfile);
         free(outfile);
     }
     // free base and ext buffers
@@ -69,9 +71,38 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
-int generate_frame()
+int generate_frame(int max_iters, double x, double y,
+                   double scale, int width, int height, char *outfile)
 {
-    // TODO
+    pid_t pid = fork();
+    if (pid == 0) {
+        /*
+         * convert number args to strings to be passed to execl()
+         * 
+         * snprintf returns the number of chars it *would* print
+         * (excluding the null terminator), which is then used as
+         * the length of the string.
+         */
+        char max_iters_s[snprintf(NULL, 0, "%d", max_iters)+1];
+        snprintf(max_iters_s, sizeof max_iters_s, "%d", max_iters);
+        char x_s[snprintf(NULL, 0, "%.6lf", x)+1];
+        snprintf(x_s, sizeof x_s, "%.6lf", x);
+        char y_s[snprintf(NULL, 0, "%.6lf", y)+1];
+        snprintf(y_s, sizeof y_s, "%.6lf", y);
+        char scale_s[snprintf(NULL, 0, "%.6lf", scale)+1];
+        snprintf(scale_s, sizeof scale_s, "%.6lf", scale);
+        char width_s[snprintf(NULL, 0, "%d", width)+1];
+        snprintf(width_s, sizeof width_s, "%d", width);
+        char height_s[snprintf(NULL, 0, "%d", height)+1];
+        snprintf(height_s, sizeof height_s, "%d", height);
+
+        // send this child to execute the mandel program with the stringified args
+        execl("./mandel", "mandel", "-m", max_iters_s, "-x", x_s, "-y", y_s,
+              "-s", scale_s, "-W", width_s, "-H", height_s, "-o", outfile, NULL);
+        // execl() does not return, so we should never get here
+        return 1;
+    }
+    // parent doesn't do anything else for this frame
     return 0;
 }
 

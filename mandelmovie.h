@@ -16,6 +16,7 @@
 
 #define NUM_FRAMES 50
 
-int generate_frame();
+int generate_frame(int max_iters, double x_zoomed, double y_zoomed,
+                   double scale, int width, int height, char *outfile);
 
 int show_help();
