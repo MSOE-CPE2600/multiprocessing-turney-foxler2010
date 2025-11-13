@@ -14,6 +14,8 @@
 #include <string.h>
 #include "outfile_parser.h"
 
+#define NUM_FRAMES 50
+
 int generate_frame();
 
 int show_help();
