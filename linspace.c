@@ -17,6 +17,15 @@
  * @return 0 on success
  * 
  */
+
+int expspace(double *linspace, double start, double end, int num_values)
+{
+    for (int i = 0; i < num_values; i++) {
+        linspace[i] = start * pow(end / start, (double) i / (num_values - 1));
+    }
+    return 0;
+}
+
 int linspace(double *linspace, double start, double end, int num_values)
 {
     double step_size = (end - start)/num_values;

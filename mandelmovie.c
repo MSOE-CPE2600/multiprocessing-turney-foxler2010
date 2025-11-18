@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     double *y_values = malloc(sizeof(double)*NUM_FRAMES);
     linspace(y_values, y_zoomed, TARGET_Y, NUM_FRAMES);
     double *scale_values = malloc(sizeof(double)*NUM_FRAMES);
-    linspace(scale_values, scale, TARGET_SCALE, NUM_FRAMES);
+    expspace(scale_values, scale, TARGET_SCALE, NUM_FRAMES);
 
     char *base = NULL;
     char *ext = NULL;
@@ -136,8 +136,10 @@ int generate_frame(int max_iters, double x, double y,
         execl("./mandel", "mandel", "-m", max_iters_s, "-x", x_s, "-y", y_s,
               "-s", scale_s, "-W", width_s, "-H", height_s, "-o", outfile, NULL);
         // execl() does not return, so we should never get here
-        return 1;
+        exit(EXIT_FAILURE);
     }
+    // parent waits for the frame to be made
+    wait(NULL);
     // parent doesn't do anything else for this frame
     return 0;
 }
@@ -149,6 +151,7 @@ int show_help()
 {
     printf("Use: mandelmovie [options]\n");
 	printf("Where options are:\n");
+    printf("-c <children> The number of child processes to use.\n");
 	printf("-m <max>    The maximum number of iterations per point. (default=1000)\n");
 	printf("-x <coord>  X coordinate of zoomed-in image's center point. (default=0)\n");
 	printf("-y <coord>  Y coordinate of zoomed-in image's center point. (default=0)\n");

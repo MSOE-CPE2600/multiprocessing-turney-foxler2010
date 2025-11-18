@@ -1,6 +1,7 @@
 CC=gcc
 CFLAGS=-c -Wall -Werror
-LDFLAGS=-ljpeg
+MANDEL_LDFLAGS= -ljpeg
+MOVIE_LDFLAGS= -lm
 MANDEL_SOURCES= mandel.c jpegrw.c
 MANDEL_EXECUTABLE=mandel
 MOVIE_SOURCES=mandelmovie.c outfile_parser.c linspace.c
@@ -24,10 +25,10 @@ clean:
 -include $(MOVIE_OBJECTS:.o=.d)
 
 $(MANDEL_EXECUTABLE): $(MANDEL_OBJECTS)
-	$(CC) $(MANDEL_OBJECTS) $(LDFLAGS) -o $@
+	$(CC) $(MANDEL_OBJECTS) $(MANDEL_LDFLAGS) -o $@
 
 $(MOVIE_EXECUTABLE): $(MOVIE_OBJECTS)
-	$(CC) $(MOVIE_OBJECTS) -o $@
+	$(CC) $(MOVIE_OBJECTS) $(MOVIE_LDFLAGS) -o $@
 
 .c.o:
 	$(CC) $(CFLAGS) $< -o $@
