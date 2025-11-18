@@ -21,9 +21,6 @@
 #define TARGET_Y 0
 #define TARGET_SCALE 4
 
-// TODO get this from the command line args
-#define NUM_CHILDREN 2
-
 int generate_frame(int max_iters, double x_zoomed, double y_zoomed,
                    double scale, int width, int height, char *outfile);
 

@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     char optchar;
 	// These are the default configuration values used
 	// if no command line arguments are given.
+    int num_children = 10;
     int max_iters = 1000;
 	double x_zoomed = 0;
 	double y_zoomed = 0;
@@ -23,8 +24,11 @@ int main(int argc, char *argv[])
 
 	// For each command line argument given,
 	// override the appropriate configuration value.
-	while ((optchar = getopt(argc,argv,"m:x:y:s:W:H:o:h")) != -1) {
+	while ((optchar = getopt(argc,argv,"c:m:x:y:s:W:H:o:h")) != -1) {
 		switch(optchar) {
+            case 'c':
+                num_children = atoi(optarg);
+                break;
 			case 'm':
 				max_iters = atoi(optarg);
 				break;
@@ -64,13 +68,13 @@ int main(int argc, char *argv[])
     char *ext = NULL;
     int outfile_base_l = split_filename(outfile_base, &base, &ext);
     // create children and give them each a different set of frames
-    for (int i = 0; i < NUM_CHILDREN; i++) {
+    for (int i = 0; i < num_children; i++) {
         pid_t pid = fork();
         if (pid == 0) {
             // this is the child
             // determine frame range to compute
-            int start = i * (NUM_FRAMES / NUM_CHILDREN);
-            int end = start + (NUM_FRAMES / NUM_CHILDREN);
+            int start = i * (NUM_FRAMES / num_children);
+            int end = start + (NUM_FRAMES / num_children);
             printf("\e[1mPID %d:\e[0m Generating frames %d-%d...\n", getpid(), start, end);
             // generate the frames and store them each to a new file
             for (int frame = start; frame < end; frame++) {
@@ -88,7 +92,7 @@ int main(int argc, char *argv[])
         }
     }
     // wait for children to finish
-    for (int i = 0; i < NUM_CHILDREN; i++) {
+    for (int i = 0; i < num_children; i++) {
         pid_t pid = wait(NULL);
         printf("\e[1mPID %d:\e[0m child with PID %d has exited\n", getpid(), pid);
     }
