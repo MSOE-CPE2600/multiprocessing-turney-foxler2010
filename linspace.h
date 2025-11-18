@@ -11,3 +11,5 @@
 int expspace(double *linspace, double start, double end, int num_values);
 
 int linspace(double *linspace, double start, double end, int num_values);
+
+int constant(double *constant, double value, int num_values);

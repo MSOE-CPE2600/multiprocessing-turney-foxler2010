@@ -26,11 +26,19 @@ int expspace(double *linspace, double start, double end, int num_values)
     return 0;
 }
 
-int linspace(double *linspace, double start, double end, int num_values)
+int linspace(double *expspace, double start, double end, int num_values)
 {
     double step_size = (end - start)/num_values;
     for (int i = 0; i < num_values; i++) {
-        linspace[i] = start+(step_size*i);
+        expspace[i] = start+(step_size*i);
+    }
+    return 0;
+}
+
+int constant(double *constant, double value, int num_values)
+{
+    for (int i = 0; i <num_values; i++) {
+        constant[i] = value;
     }
     return 0;
 }

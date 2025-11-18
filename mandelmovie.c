@@ -58,9 +58,9 @@ int main(int argc, char *argv[])
 	}
     
     double *x_values = malloc(sizeof(double)*NUM_FRAMES);
-    linspace(x_values, x_zoomed, TARGET_X, NUM_FRAMES);
+    constant(x_values, x_zoomed, NUM_FRAMES);
     double *y_values = malloc(sizeof(double)*NUM_FRAMES);
-    linspace(y_values, y_zoomed, TARGET_Y, NUM_FRAMES);
+    constant(y_values, y_zoomed, NUM_FRAMES);
     double *scale_values = malloc(sizeof(double)*NUM_FRAMES);
     expspace(scale_values, scale, TARGET_SCALE, NUM_FRAMES);
 
