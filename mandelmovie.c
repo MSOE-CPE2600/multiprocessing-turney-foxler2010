@@ -59,16 +59,40 @@ int main(int argc, char *argv[])
     linspace(y_values, y_zoomed, TARGET_Y, NUM_FRAMES);
     double *scale_values = malloc(sizeof(double)*NUM_FRAMES);
     linspace(scale_values, scale, TARGET_SCALE, NUM_FRAMES);
+
     char *base = NULL;
     char *ext = NULL;
     int outfile_base_l = split_filename(outfile_base, &base, &ext);
-    for (int frame = 0; frame < NUM_FRAMES; frame++) {
-        char *outfile = parse_outfile(outfile_base_l, &base, &ext, frame);
-        // TODO modify x, y, and scale vars for each frame
-        generate_frame(max_iters, x_values[frame], y_values[frame],
-                       scale_values[frame], width, height, outfile);
-        free(outfile);
+    // create children and give them each a different set of frames
+    for (int i = 0; i < NUM_CHILDREN; i++) {
+        pid_t pid = fork();
+        if (pid == 0) {
+            // this is the child
+            // determine frame range to compute
+            int start = i * (NUM_FRAMES / NUM_CHILDREN);
+            int end = start + (NUM_FRAMES / NUM_CHILDREN);
+            printf("\e[1mPID %d:\e[0m Generating frames %d-%d...\n", getpid(), start, end);
+            // generate the frames and store them each to a new file
+            for (int frame = start; frame < end; frame++) {
+                char *outfile = parse_outfile(outfile_base_l, &base, &ext, frame);
+                generate_frame(max_iters, x_values[frame], y_values[frame],
+                               scale_values[frame], width, height, outfile);
+                free(outfile);
+            }
+            // child is all done
+            exit(EXIT_SUCCESS);
+        } else {
+            // this is the parent
+            // print info about the child that was just created
+            printf("\e[1mPID %d:\e[0m Created new child with PID %d\n", getpid(), pid);
+        }
     }
+    // wait for children to finish
+    for (int i = 0; i < NUM_CHILDREN; i++) {
+        pid_t pid = wait(NULL);
+        printf("\e[1mPID %d:\e[0m child with PID %d has exited\n", getpid(), pid);
+    }
+
     // free buffers and linspaces
     free(x_values);
     free(y_values);
@@ -76,7 +100,7 @@ int main(int argc, char *argv[])
     free(base);
     free(ext);
 
-    return EXIT_SUCCESS;
+    exit(EXIT_SUCCESS);
 }
 
 int generate_frame(int max_iters, double x, double y,
