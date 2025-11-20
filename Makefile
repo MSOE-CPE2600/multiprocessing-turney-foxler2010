@@ -4,7 +4,7 @@ MANDEL_LDFLAGS= -ljpeg
 MOVIE_LDFLAGS= -lm
 MANDEL_SOURCES= mandel.c jpegrw.c
 MANDEL_EXECUTABLE=mandel
-MOVIE_SOURCES=mandelmovie.c outfile_parser.c linspace.c
+MOVIE_SOURCES=mandelmovie.c outfile_parser.c growth_functions.c
 MOVIE_EXECUTABLE=mandelmovie
 
 # Do not modify vars below this line!!

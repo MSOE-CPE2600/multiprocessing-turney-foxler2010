@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     double *y_values = malloc(sizeof(double)*NUM_FRAMES);
     constant(y_values, y_zoomed, NUM_FRAMES);
     double *scale_values = malloc(sizeof(double)*NUM_FRAMES);
-    expspace(scale_values, scale, TARGET_SCALE, NUM_FRAMES);
+    exponential_growth(scale_values, scale, TARGET_SCALE, NUM_FRAMES);
 
     char *base = NULL;
     char *ext = NULL;

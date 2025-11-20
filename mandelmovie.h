@@ -14,7 +14,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include "outfile_parser.h"
-#include "linspace.h"
+#include "growth_functions.h"
 
 #define NUM_FRAMES 50
 #define TARGET_X 0
