@@ -11,13 +11,22 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <pthread.h>
 #include "jpegrw.h"
 
-static int iteration_to_color(int i, int max);
+struct thread_arg_t {
+    int width;
+    int height;
+    int num_pixels_region;
+};
 
 static int iterations_at_point(double x, double y, int max);
 
 static void compute_image(imgRawImage *img, double xmin, double xmax,
-                          double ymin, double ymax, int max);
+                          double ymin, double ymax, int max, int num_threads);
+
+static void* compute_region(void *arg);
+
+static int iteration_to_color(int i, int max);
 
 static void show_help();

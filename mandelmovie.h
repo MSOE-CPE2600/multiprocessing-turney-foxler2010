@@ -21,7 +21,7 @@
 #define TARGET_Y 0
 #define TARGET_SCALE 4
 
-int generate_frame(int max_iters, double x_zoomed, double y_zoomed,
-                   double scale, int width, int height, char *outfile);
+int generate_frame(int max_iters, double x, double y, int num_threads,
+                   double scale, int width, int height, char *outfile)
 
 int show_help();

@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
 	// These are the default configuration values used
 	// if no command line arguments are given.
     int num_children = 10;
+    int num_threads = 1;
     int max_iters = 1000;
 	double x_zoomed = 0;
 	double y_zoomed = 0;
@@ -24,10 +25,13 @@ int main(int argc, char *argv[])
 
 	// For each command line argument given,
 	// override the appropriate configuration value.
-	while ((optchar = getopt(argc,argv,"c:m:x:y:s:W:H:o:h")) != -1) {
+	while ((optchar = getopt(argc,argv,"c:t:m:x:y:s:W:H:o:h")) != -1) {
 		switch(optchar) {
             case 'c':
                 num_children = atoi(optarg);
+                break;
+            case 't':
+                num_threads = atoi(optarg);
                 break;
 			case 'm':
 				max_iters = atoi(optarg);
@@ -79,7 +83,7 @@ int main(int argc, char *argv[])
             // generate the frames and store them each to a new file
             for (int frame = start; frame < end; frame++) {
                 char *outfile = parse_outfile(outfile_base_l, &base, &ext, frame);
-                generate_frame(max_iters, x_values[frame], y_values[frame],
+                generate_frame(max_iters, x_values[frame], y_values[frame], num_threads,
                                scale_values[frame], width, height, outfile);
                 free(outfile);
             }
@@ -107,7 +111,7 @@ int main(int argc, char *argv[])
     exit(EXIT_SUCCESS);
 }
 
-int generate_frame(int max_iters, double x, double y,
+int generate_frame(int max_iters, double x, double y, int num_threads,
                    double scale, int width, int height, char *outfile)
 {
     pid_t pid = fork();
@@ -133,7 +137,7 @@ int generate_frame(int max_iters, double x, double y,
         snprintf(height_s, sizeof height_s, "%d", height);
 
         // send this child to execute the mandel program with the stringified args
-        execl("./mandel", "mandel", "-m", max_iters_s, "-x", x_s, "-y", y_s,
+        execl("./mandel", "mandel", "-t", num_threads, "-m", max_iters_s, "-x", x_s, "-y", y_s,
               "-s", scale_s, "-W", width_s, "-H", height_s, "-o", outfile, NULL);
         // execl() does not return, so we should never get here
         exit(EXIT_FAILURE);
@@ -152,6 +156,7 @@ int show_help()
     printf("Use: mandelmovie [options]\n");
 	printf("Where options are:\n");
     printf("-c <children> The number of child processes to use.\n");
+    printf("-t <threads> The number of threads to use per image.\n");
 	printf("-m <max>    The maximum number of iterations per point. (default=1000)\n");
 	printf("-x <coord>  X coordinate of zoomed-in image's center point. (default=0)\n");
 	printf("-y <coord>  Y coordinate of zoomed-in image's center point. (default=0)\n");
