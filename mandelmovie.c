@@ -123,6 +123,8 @@ int generate_frame(int max_iters, double x, double y, int num_threads,
          * (excluding the null terminator), which is then used as
          * the length of the string.
          */
+        char num_threads_s[snprintf(NULL, 0, "%d", num_threads)+1];
+        snprintf(num_threads_s, sizeof num_threads_s, "%d", num_threads);
         char max_iters_s[snprintf(NULL, 0, "%d", max_iters)+1];
         snprintf(max_iters_s, sizeof max_iters_s, "%d", max_iters);
         char x_s[snprintf(NULL, 0, "%.6lf", x)+1];
@@ -137,7 +139,7 @@ int generate_frame(int max_iters, double x, double y, int num_threads,
         snprintf(height_s, sizeof height_s, "%d", height);
 
         // send this child to execute the mandel program with the stringified args
-        execl("./mandel", "mandel", "-t", num_threads, "-m", max_iters_s, "-x", x_s, "-y", y_s,
+        execl("./mandel", "mandel", "-t", num_threads_s, "-m", max_iters_s, "-x", x_s, "-y", y_s,
               "-s", scale_s, "-W", width_s, "-H", height_s, "-o", outfile, NULL);
         // execl() does not return, so we should never get here
         exit(EXIT_FAILURE);
