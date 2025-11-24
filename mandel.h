@@ -12,12 +12,18 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <math.h>
 #include "jpegrw.h"
 
 struct thread_arg_t {
-    int width;
-    int height;
-    int num_pixels_region;
+    imgRawImage *img;
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
+    int max;
+    int start;
+    int end;
 };
 
 static int iterations_at_point(double x, double y, int max);

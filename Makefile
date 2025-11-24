@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-c -Wall -Werror
-MANDEL_LDFLAGS= -ljpeg -lpthread
+MANDEL_LDFLAGS= -lm -ljpeg -lpthread
 MOVIE_LDFLAGS= -lm
 MANDEL_SOURCES= mandel.c jpegrw.c
 MANDEL_EXECUTABLE=mandel

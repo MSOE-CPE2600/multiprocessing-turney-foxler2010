@@ -108,51 +108,51 @@ int iterations_at_point(double x, double y, int max)
  */
 void compute_image(imgRawImage *img, double xmin, double xmax, double ymin, double ymax, int max, int num_threads)
 {
-	int width = img->width;
-	int height = img->height;
-
-	int num_pixels = width * height;
-	int pixels_per_thread = num_pixels / num_threads;
-	int extra_pixels = num_pixels % num_threads;
-	printf("\t%d pixels total, %d pixels per thread, %d extra pixels, %d sum (should match total)\n",
-		   num_pixels, pixels_per_thread, extra_pixels, (pixels_per_thread * num_threads) + extra_pixels);
-
-	struct thread_arg_t *image_info = malloc(sizeof(struct thread_arg_t));
-	image_info->width = img->width;
-	image_info->height = img->height;
-	image_info->num_pixels_region = pixels_per_thread;
-
+	int total_pixels = img->width * img->height;
+	// how many pixels each thread should generate; rounded up
+	int region_size = (int) ceil((double) total_pixels / num_threads);
+	printf("\ttotal pixels: %d, region size: %d\n", total_pixels, region_size);
 	pthread_t thread[num_threads];
-	int i;
-	for (i = 0; i < num_threads-1; i++) {
-		pthread_create(thread[i], NULL, &compute_region, image_info);
+	struct thread_arg_t *args[num_threads];
+	for(int i = 0; i < num_threads; i++) {
+		args[i] = malloc(sizeof(struct thread_arg_t));
+		args[i]->img = img;
+		args[i]->xmin = xmin;
+		args[i]->xmax = xmax;
+		args[i]->ymin = ymin;
+		args[i]->ymax = ymax;
+		args[i]->max = max;
+		args[i]->start = i * region_size;
+		args[i]->end = (int) fmin(args[i]->start + region_size, total_pixels);
+		printf("\tcreating thread with range %d-%d\n", args[i]->start, args[i]->end);
+		pthread_create(&thread[i], NULL, &compute_region, args[i]);
 	}
-	image_info->num_pixels_region = pixels_per_thread + extra_pixels;
-	pthread_create(thread[i+1], NULL, &compute_region, image_info);
-	free(arg);
-
-	for (i = 0; i < num_threads; i++) {
+	for (int i = 0; i < num_threads; i++) {
 		pthread_join(thread[i], NULL);
+		free(args[i]);
 	}
 }
 
-static void* compute_region(void *arg)
+static void* compute_region(void *arg_void)
 {
-	struct thread_arg_t *image_info = (struct thread_arg_t*) arg;
-	int width = image_info->width;
-	int height = image_info->height;
-	// For every pixel in the image...
-	for (j = 0; j < height; j++) {
-		for (i = 0; i < width; i++) {
-			// Determine the point in x,y space for that pixel.
-			double x = xmin + i*(xmax-xmin)/width;
-			double y = ymin + j*(ymax-ymin)/height;
-			// Compute the iterations at that point.
-			int iters = iterations_at_point(x, y, max);
-			// Set the pixel in the bitmap.
-			setPixelCOLOR(img, i, j, iteration_to_color(iters, max));
-		}
+	struct thread_arg_t *arg = (struct thread_arg_t*) arg_void;
+	int img_x = 0;
+	int img_y = 0;
+	double mandel_x = 0;
+	double mandel_y = 0;
+	for (int pixel = arg->start; pixel < arg->end; pixel++) {
+		// determine pixel coords based off of the pixel's number and width
+		img_x = pixel % arg->img->width;
+		img_y = pixel / arg->img->width;
+		// Determine the point in x,y space for that pixel.
+		mandel_x = arg->xmin + img_x * (arg->xmax - arg->xmin) / arg->img->width;
+		mandel_y = arg->ymin + img_y * (arg->ymax - arg->ymin) / arg->img->height;
+		// Compute the iterations at that point.
+		int iters = iterations_at_point(mandel_x, mandel_y, arg->max);
+		// Set the pixel in the bitmap.
+		setPixelCOLOR(arg->img, img_x, img_y, iteration_to_color(iters, arg->max));
 	}
+	return NULL;
 }
 
 /**
