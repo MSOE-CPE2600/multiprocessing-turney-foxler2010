@@ -11,9 +11,6 @@ mandelmovie
 *.mpg
 out
 
-# Other images
-*.png
-
 # Not these outputs
 # (they are useful to have around)
 !mandel.jpg
