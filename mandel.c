@@ -115,6 +115,8 @@ void compute_image(imgRawImage *img, double xmin, double xmax, double ymin, doub
 	pthread_t thread[num_threads];
 	struct thread_arg_t *args[num_threads];
 	for(int i = 0; i < num_threads; i++) {
+		// args must be malloc'ed inside the loop since there is a new
+		// set of args for each thread, and they all need their own allocation
 		args[i] = malloc(sizeof(struct thread_arg_t));
 		args[i]->img = img;
 		args[i]->xmin = xmin;
